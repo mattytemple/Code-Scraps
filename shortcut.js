@@ -1,11 +1,19 @@
+/**
+ * http://www.mattytemple.com
+ * Version : 2.1.1
+ * By Matt Temple
+ * License : GPLv3
+ */
 shortcut = {
 	'all_shortcuts':{},//All the shortcuts are stored in this array
-	'add': function(shortcut_combination,callback,opt) {
+        'commandMode':false,
+	'add':function(shortcut_combination,callback,opt) {
 		//Provide a set of default options
 		var default_options = {
 			'type':'keydown',
 			'propagate':false,
 			'disable_in_input':false,
+                        'require_command_mode':true,
 			'target':document,
 			'keycode':false
 		}
@@ -33,11 +41,16 @@ shortcut = {
 
 				if(element.tagName == 'INPUT' || element.tagName == 'TEXTAREA') return;
 			}
-	
+			
+                        if(opt['require_command_mode'] && !ths.commandMode) { //Don't enable shortcut key unless we are in command mode
+			  return;
+                        }
+
+
 			//Find Which key is pressed
 			if (e.keyCode) code = e.keyCode;
 			else if (e.which) code = e.which;
-			var character = String.fromCharCode(code);
+			var character = String.fromCharCode(code).toLowerCase();
 			
 			if(code == 188) character=","; //If the user presses , when the type is onkeydown
 			if(code == 190) character="."; //If the user presses , when the type is onkeydown
@@ -213,5 +226,11 @@ shortcut = {
 		if(ele.detachEvent) ele.detachEvent('on'+type, callback);
 		else if(ele.removeEventListener) ele.removeEventListener(type, callback, false);
 		else ele['on'+type] = false;
-	}
+	},
+        'commandModeListener':null,
+        'toggleCommandMode':function(){
+          this.commandMode = !(this.commandMode);
+
+          if(this.commandModeListener != null) this.commandModeListener();
+        }
 }
