@@ -37,7 +37,7 @@ class shortcodes {
 				array_push($shortcodes_array, $array);
 			}
 		}
-		echo '<pre>'.print_r($shortcodes_array, TRUE).'</pre>';
+		//echo '<pre>'.print_r($shortcodes_array, TRUE).'</pre>';
 		foreach ($shortcodes_array as $key => $value) {
 			if(function_exists($value['code'])) {
 				//$str = str_replace($str, $replace, $value['code']($value['params']));
