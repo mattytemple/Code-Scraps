@@ -14,11 +14,14 @@ class shortcodes {
 		// [code var1=1|var2=2]
 		preg_match_all("/\[([a-zA-Z0-9_=-|\s]*?)\]/", $str, $matches);
 		//echo '<pre>'.print_r($matches, TRUE).'</pre>';
-		foreach ($matches as $key => $shortcode) {
-			if(!strstr($shortcode[0], "[")) {
-				if(strstr($shortcode[0], " ")) {
-					$code = substr($shortcode[0], 0, strpos($shortcode[0], " "));
-					$passed_data = str_replace($code." ", "", $shortcode[0]);
+		$shortcodes = $matches[1];
+		//echo '<pre>'.print_r($shortcodes, TRUE).'</pre>';
+		$shortcodes_array = array();
+		foreach ($shortcodes as $key => $shortcode) {
+			if(!strstr($shortcode, "[")) {
+				if(strstr($shortcode, " ")) {
+					$code = substr($shortcode, 0, strpos($shortcode, " "));
+					$passed_data = str_replace($code." ", "", $shortcode);
 					$explode_passed_data = explode('|', $passed_data);
 					$params = array();
 					if(is_array($explode_passed_data)) {
@@ -29,12 +32,12 @@ class shortcodes {
 					} 
 					$array = array("key" => "[".$code." ".$passed_data."]","code" => $code, "params" => $params);
 				} else { // if shortcode does not have a space it has no values
-					$array = array("key" => "[".$code."]", "code" => $shortcode[0], "params" => array());	
+					$array = array("key" => "[".$code."]", "code" => $shortcode, "params" => array());	
 				}
-				$shortcodes_array[$matches[0][$shortcode[0]]] = $array;
+				array_push($shortcodes_array, $array);
 			}
 		}
-		//echo '<pre>'.print_r($shortcodes_array, TRUE).'</pre>';
+		echo '<pre>'.print_r($shortcodes_array, TRUE).'</pre>';
 		foreach ($shortcodes_array as $key => $value) {
 			if(function_exists($value['code'])) {
 				//$str = str_replace($str, $replace, $value['code']($value['params']));
@@ -50,13 +53,13 @@ function world($args) {
 		if($args['type'] == '1') {
 			return 'World';
 		} else {
-			return 'moon';
+			return 'World!';
 		}
 	} else {
 		return 'nothing found for the ID '.$args['id'];
 	}
 }
 $shortcodes = new shortcodes;
-echo $shortcodes->do_shortcodes("Hello [world id=1|type=1]");
+echo $shortcodes->do_shortcodes("Hello [world id=1|type=1]. Hello [world id=1|type=2]. Hello [world id=2|type=1] [user id=2]");
 
 ?>
